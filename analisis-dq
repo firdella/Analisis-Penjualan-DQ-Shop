@@ -1,0 +1,18 @@
+SELECT 
+A.Product, 
+A.total_buyer, 
+D.loyal_customer
+FROM (
+   SELECT Product, SUM(customer_id) total_buyer
+   FROM data_retail
+   Group by 1) A
+JOIN (
+   SELECT B.Product, SUM(customer_id) loyal_customer
+   FROM data_retail B
+   JOIN (
+    SELECT Product, SUM(Count_Transaction) AS Count_Transaction
+    FROM data_retail 
+    GROUP BY 1
+   ) C ON C.Product = B.Count_Transaction AND B.Count_Transaction > C.Count_Transaction
+   GROUP BY 1
+   ) D ON A.Product = D.Product
